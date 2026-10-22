@@ -2,9 +2,11 @@
 
 - `app/Http/Controllers/Admin`: thin HTTP controllers.
 - `app/Http/Requests/Admin`: request validation.
-- `app/Services/Admin`: use cases grouped by catalog, loans, fines, reports, and Member accounts.
+- `app/Services/Admin`: Admin use cases grouped by catalog, loans, fines, reports, and Member accounts.
+- `app/Services/Loans/LoanEligibilityService.php`: shared eligibility and two-unit allocation rules for reuse by Member request flows.
 - `app/Models/Admin` and `app/Models/Member`: role profile records; shared login identity is `App\Models\User`.
 - `app/Models/Catalog`, `app/Models/Loans`, and `app/Models/Fines`: business entities.
+- Member controllers, requests, and services have dedicated folders; Member workflows are not implemented in this Admin scope.
 
 ## Implemented business rules
 - Approval atomically reserves all requested units and requires an active Member with no unpaid fines.
@@ -15,6 +17,7 @@
 - Only Admin can confirm returns and fine payments.
 - Items are archived and Member accounts deactivated rather than permanently deleted.
 - Loan reports can be filtered and exported as CSV.
+- A migration adds a unique request/unit constraint and indexes for common operational queries.
 
 ## Admin routes
 - `POST /admin/login`, `POST /admin/logout`
@@ -26,4 +29,4 @@
 - `GET /admin/fines`; `POST /admin/fines/{fine}/confirm-payment`
 - `GET /admin/reports/loans`; `GET /admin/reports/loans/export`
 
-The feature tests are authored but not yet executed. The test suite must pass before the branch is considered ready for NeonDB validation.
+The feature tests cover authentication, authorization, catalog/member management, loan allocation, return/fine boundaries, unpaid-fine restrictions, reports, and handover timeout. They must pass on the latest commit before the branch is considered ready for NeonDB validation.
