@@ -12,8 +12,8 @@ return [
     |
     | Here you may specify which of the database connections below you wish
     | to use as your default connection for database operations. This is
-    | the connection which will be utilized unless another connection
-    | is explicitly specified when you execute a query / statement.
+    | the connection which will be utilized unless another connection is
+    | explicitly specified when you execute a query / statement.
     |
     */
 
@@ -96,7 +96,7 @@ return [
             'prefix' => '',
             'prefix_indexes' => true,
             'search_path' => 'public',
-            'sslmode' => env('DB_SSLMODE', 'prefer'),
+            'sslmode' => env('DB_SSLMODE', 'require'),
         ],
 
         'sqlsrv' => [
@@ -109,9 +109,8 @@ return [
             'password' => env('DB_PASSWORD', ''),
             'charset' => env('DB_CHARSET', 'utf8'),
             'prefix' => '',
-            'prefix_indexes' => true,
-            // 'encrypt' => env('DB_ENCRYPT', 'yes'),
-            // 'trust_server_certificate' => env('DB_TRUST_SERVER_CERTIFICATE', 'false'),
+            'strict' => true,
+            'engine' => null,
         ],
 
     ],
@@ -122,8 +121,8 @@ return [
     |--------------------------------------------------------------------------
     |
     | This table keeps track of all the migrations that have already run for
-    | your application. Using this information, we can determine which of
-    | the migrations on disk haven't actually been run on the database.
+    | your application. Using this information, we can determine which
+    | migrations on disk haven't actually been run on the database.
     |
     */
 
@@ -136,11 +135,6 @@ return [
     |--------------------------------------------------------------------------
     | Redis Databases
     |--------------------------------------------------------------------------
-    |
-    | Redis is an open source, fast, and advanced key-value store that also
-    | provides a richer body of commands than a typical key-value system
-    | such as Memcached. You may define your connection settings here.
-    |
     */
 
     'redis' => [
