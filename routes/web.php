@@ -4,13 +4,17 @@ use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\FineController;
 use App\Http\Controllers\Admin\ItemController;
+use App\Http\Controllers\Admin\LoanReportController;
 use App\Http\Controllers\Admin\LoanRequestController;
+use App\Http\Controllers\Admin\MemberAccountController;
 use Illuminate\Support\Facades\Route;
-Route::get('/',fn()=>response()->json(['name'=>'Dream Pawn Shop','status'=>'ok']));
-Route::prefix('admin')->name('admin.')->group(function():void{
+
+Route::get('/', fn () => view('welcome'));
+
+Route::prefix('admin')->name('admin.')->group(function (): void {
  Route::post('/login',[AuthController::class,'login'])->middleware('throttle:10,1')->name('login');
  Route::post('/logout',[AuthController::class,'logout'])->middleware('auth')->name('logout');
- Route::middleware(['auth','admin'])->group(function():void{
+ Route::middleware(['auth','admin'])->group(function (): void {
   Route::get('/dashboard',DashboardController::class)->name('dashboard');
   Route::get('/categories',[CategoryController::class,'index'])->name('categories.index');
   Route::post('/categories',[CategoryController::class,'store'])->name('categories.store');
@@ -22,6 +26,10 @@ Route::prefix('admin')->name('admin.')->group(function():void{
   Route::get('/items/{item}',[ItemController::class,'show'])->name('items.show');
   Route::patch('/items/{item}',[ItemController::class,'update'])->name('items.update');
   Route::patch('/items/{item}/archive',[ItemController::class,'archive'])->name('items.archive');
+  Route::get('/members',[MemberAccountController::class,'index'])->name('members.index');
+  Route::post('/members',[MemberAccountController::class,'store'])->name('members.store');
+  Route::get('/members/{member}',[MemberAccountController::class,'show'])->name('members.show');
+  Route::patch('/members/{member}',[MemberAccountController::class,'update'])->name('members.update');
   Route::get('/loan-requests',[LoanRequestController::class,'index'])->name('loan-requests.index');
   Route::post('/loan-requests/{loan}/approve',[LoanRequestController::class,'approve'])->name('loan-requests.approve');
   Route::post('/loan-requests/{loan}/reject',[LoanRequestController::class,'reject'])->name('loan-requests.reject');
@@ -29,5 +37,7 @@ Route::prefix('admin')->name('admin.')->group(function():void{
   Route::post('/loan-requests/{loan}/confirm-return',[LoanRequestController::class,'confirmReturn'])->name('loan-requests.confirm-return');
   Route::get('/fines',[FineController::class,'index'])->name('fines.index');
   Route::post('/fines/{fine}/confirm-payment',[FineController::class,'confirmPayment'])->name('fines.confirm-payment');
+  Route::get('/reports/loans',[LoanReportController::class,'index'])->name('reports.loans.index');
+  Route::get('/reports/loans/export',[LoanReportController::class,'export'])->name('reports.loans.export');
  });
 });

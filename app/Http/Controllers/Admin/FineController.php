@@ -1,22 +1,12 @@
 <?php
 namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
-use App\Models\Fine;
+use App\Models\Fines\Fine;
+use App\Services\Admin\Fines\FineService;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Support\Facades\DB;
+use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 class FineController extends Controller {
- public function index(): JsonResponse {
-  $fines=Fine::with(['loanRequestItem.item','loanRequestItem.loanRequest.member:id,name,email','recorder:id,name','paymentConfirmer:id,name'])->orderByDesc('assessed_at')->paginate(20);
-  return response()->json(['data'=>$fines]);
- }
- public function confirmPayment(Fine $fine): JsonResponse {
-  $updated=DB::transaction(function()use($fine):bool{
-   $locked=Fine::whereKey($fine->id)->lockForUpdate()->firstOrFail();
-   if($locked->status!=='unpaid')return false;
-   $locked->update(['status'=>'paid','paid_at'=>now(),'paid_confirmed_by'=>auth()->id()]);
-   return true;
-  });
-  if(!$updated)return response()->json(['message'=>'Denda ini tidak berstatus unpaid.'],409);
-  return response()->json(['message'=>'Pembayaran denda dikonfirmasi.','data'=>$fine->fresh()]);
- }
+ public function index(Request $r,FineService $s):JsonResponse{$f=$r->validate(['status'=>['sometimes',Rule::in([Fine::UNPAID,Fine::PAID])]]);return response()->json(['data'=>$s->paginate($f)]);}
+ public function confirmPayment(Fine $fine,FineService $s):JsonResponse{$r=$s->confirmPayment($fine,(int)auth()->id());if(isset($r['error']))return response()->json(['message'=>$r['error']],$r['http_status']);return response()->json(['message'=>'Pembayaran denda dikonfirmasi.','data'=>$r['data']]);}
 }
