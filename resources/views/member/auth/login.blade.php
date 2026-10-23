@@ -68,6 +68,7 @@
                     <span>Klik Isi Otomatis Akun Demo Member</span>
                 </button>
             </div>
+            @endif
         </div>
 
         <div class="mt-6 text-center text-xs text-slate-400">
@@ -78,6 +79,7 @@
     </div>
 </div>
 
+@if (app()->environment('local', 'testing'))
 <script>
     function fillMemberDemo() {
         document.getElementById('email').value = 'member@dreampawn.test';
@@ -85,5 +87,5 @@
         showToast('Kredensial Demo Member telah diisi!', 'success');
     }
 </script>
-            @endif
+@endif
 @endsection
