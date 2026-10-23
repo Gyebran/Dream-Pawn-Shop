@@ -33,17 +33,18 @@ Kode Admin saat ini berada di branch `feat/admin-backend`, bukan `main`.
 - Fines: daftar dan konfirmasi pembayaran.
 - Loan report dengan filter dan export CSV.
 - Pemisahan Controllers, Form Requests, Services, dan Models per domain.
+- Backend Member end-to-end: login/logout, dashboard eligibility, profil, katalog, pengajuan/riwayat loan, dan daftar denda.
 - Shared `LoanEligibilityService` untuk unpaid fines dan batas alokasi dua unit.
 - Command/schedule untuk membatalkan approval yang melewati deadline handover.
 - Migration constraint/index tambahan.
 - Feature tests untuk auth, authorization, katalog, Member, report, workflow loan, fine boundary, unpaid fine, batas dua unit, dan expiry.
-- CI test memakai SQLite in-memory dan hasil terakhir diketahui sukses.
+- CI test memakai SQLite in-memory. Setelah integrasi Admin + Member ke `main`, test suite terakhir berhasil: **52 tests passed, 183 assertions**.
+- Aturan Member: unit pada request `pending` milik Member ikut dihitung saat pengajuan baru dibuat, bersama approved reservations dan active loans. Pending tetap tidak mereservasi stok sampai Admin melakukan approval.
 
 ### Belum selesai / belum diverifikasi
 
 - NeonDB belum diuji; CI SQLite bukan bukti kompatibilitas PostgreSQL.
 - UI/UX lengkap dan integrasi semua halaman Blade belum dianggap selesai.
-- Member backend end-to-end belum diimplementasikan.
 - Scheduler production perlu benar-benar dikonfigurasi di environment deployment.
 - UAT, dokumentasi pengguna, dan final handover masih lanjutan.
 - File flowchart/ERD belum tersedia sebagai file terpisah yang dapat dibandingkan langsung di repo saat penulisan dokumen ini.
@@ -62,6 +63,19 @@ Kode Admin saat ini berada di branch `feat/admin-backend`, bukan `main`.
 | Reports | `GET /admin/reports/loans`, `GET /admin/reports/loans/export` |
 
 Verifikasi nama route, method, input, dan redirect aktual pada `routes/web.php` serta controller/Form Request sebelum integrasi FE.
+
+### Endpoint Member yang tersedia
+
+| Fitur | Endpoint |
+|---|---|
+| Auth | `POST /member/login`, `POST /member/logout` |
+| Dashboard | `GET /member/dashboard` |
+| Profile | `GET /member/profile`, `PATCH /member/profile` |
+| Catalog | `GET /member/catalog/categories`, `GET /member/catalog/items`, `GET /member/catalog/items/{item}` |
+| Loan requests | `GET /member/loan-requests`, `POST /member/loan-requests`, `GET /member/loan-requests/{loan}` |
+| Fines | `GET /member/fines` |
+
+Semua route Member selain login/logout dilindungi autentikasi dan middleware Member. Periksa controller/Form Request untuk detail payload dan response.
 
 ## 3. Business rules yang wajib dipertahankan
 
@@ -87,6 +101,8 @@ Status yang digunakan:
 - `fines.status`: `unpaid`, `paid`.
 
 Jangan menambahkan status seperti `overdue` tanpa keputusan domain; keterlambatan dapat dihitung dari `due_at` dan waktu sekarang.
+
+**Batas dua unit pada pengajuan Member:** hitung unit dari request `pending` milik Member tersebut + approved reservations + active loans + unit pada request baru. Ini aturan saat pengajuan oleh Member. Saat Admin memutuskan approval, service Admin tetap memvalidasi approved reservations dan active loans; pending tidak mereservasi unit fisik.
 
 ## 4. Aturan coding dan kolaborasi
 
@@ -294,7 +310,7 @@ Jangan hapus index/constraint tanpa memahami query dan menyiapkan migration baru
 3. Finalisasi kontrak input/response/redirect.
 4. Implementasi UI Admin berdasarkan spesifikasi halaman di atas.
 5. Integrasikan tiap halaman ke endpoint dan tambahkan test edge case.
-6. Implementasi Member backend/UI setelah kontrak workflow disepakati.
+6. Implementasi dan integrasi UI Member berdasarkan kontrak workflow yang sudah diimplementasikan.
 7. UAT, dokumentasi pengguna, review PR, lalu merge setelah approval.
 
 ## 9. Checklist anggota tim

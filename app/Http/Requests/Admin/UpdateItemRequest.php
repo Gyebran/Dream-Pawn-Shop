@@ -1,0 +1,8 @@
+<?php
+namespace App\Http\Requests\Admin;
+use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
+class UpdateItemRequest extends FormRequest {
+ public function authorize():bool{return true;}
+ public function rules():array{$i=$this->route('item');return ['unit_code'=>['sometimes','required','string','max:255',Rule::unique('items','unit_code')->ignore($i?->id)],'name'=>['sometimes','required','string','max:255'],'description'=>['sometimes','nullable','string'],'category_ids'=>['sometimes','array'],'category_ids.*'=>['integer','distinct','exists:categories,id']];}
+}
