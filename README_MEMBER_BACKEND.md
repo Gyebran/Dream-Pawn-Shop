@@ -28,18 +28,18 @@ Loan request payloads include read-only helper fields for the UI: `unit_count`, 
 1. Account must be an active Member (middleware and re-checked inside the transaction).
 2. No `unpaid` fines (team handoff rule 10; overrides PRD D-07's temporary assumption).
 3. Every requested unit must currently be `available`; archived, reserved and loaned units are rejected with the unit codes named.
-4. Two-unit cap: approved reservations + active loans (shared `allocatedUnitCount`) **plus units on the Member's own pending requests** + this request must not exceed `LoanEligibilityService::MAX_ALLOCATED_UNITS`. Counting pending units at submission time is a Member-side rule only; Admin approval keeps using the shared rule unchanged.
+4. **Confirmed team rule:** the two-unit cap counts approved reservations + active loans (shared `allocatedUnitCount`) **plus units on the Member's own pending requests** + the new request. The total must not exceed `LoanEligibilityService::MAX_ALLOCATED_UNITS`. Pending units count at submission time; Admin approval continues to apply its own shared allocation validation and does not reserve units until approval.
 5. Submission only records the request as `pending` with `requested_at`. Units are reserved by Admin approval (D-02); the 24-hour handover deadline, five-day period and fines stay in the Admin workflow.
 
-## Decisions and assumptions to confirm with the team
+## Other workflow decisions
 
 - **No return-request endpoint.** Flowchart 5.2 and handoff rule 9: Member contacts Admin; the ERD has no `return_requested_at`. Add only after an ERD revision.
 - **No self-registration** (D-01: Admin creates accounts). Member profile update covers `name`, `email` and `password` because `members` has no extra columns.
-- **No Member-side cancellation of a pending request.** Not in BRD/PRD/flowchart; Admin rejects instead. Easy to add later.
+- **No Member-side cancellation of a pending request.** Not in BRD/PRD/flowchart; Admin rejects instead. Revisit only if the requirement changes.
 - **Catalog requires Member login**, following the flowchart (login precedes browsing). Moving `GET /member/catalog/*` outside the `auth` group would make it public.
-- **Guest requests now get a JSON 401** on every protected route (`bootstrap/app.php`), replacing the previous HTTP 500 caused by a redirect to a non-existent `login` route.
-- Constants added: `LoanEligibilityService::MAX_ALLOCATED_UNITS` and `Fine::RATE_PER_UNIT_PER_DAY`. Admin services still use their literals and can switch to the constants.
+- **Guest requests return JSON 401** on protected routes (`bootstrap/app.php`), avoiding redirects to a non-existent `login` route.
+- Constants added: `LoanEligibilityService::MAX_ALLOCATED_UNITS` and `Fine::RATE_PER_UNIT_PER_DAY`. Admin services still use their literals and can switch to the constants in a separate cleanup.
 
 ## Tests
 
-`tests/Feature/MemberBackendTest.php` covers authentication and authorization, profile, catalog visibility and filters, every submission rule, ownership of transactions and fines, overdue helpers, the dashboard, and an end-to-end flow through Admin approve, handover, late return, fine and payment confirmation.
+`tests/Feature/MemberBackendTest.php` covers authentication and authorization, profile, catalog visibility and filters, submission rules (including pending-unit cap), ownership of transactions and fines, overdue helpers, dashboard, and an end-to-end flow through Admin approve, handover, late return, fine and payment confirmation.
