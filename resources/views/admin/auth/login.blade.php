@@ -31,7 +31,7 @@
                         <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 pointer-events-none text-slate-500">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 12a4 4 0 10-8 0 4 4 0 008 0zm0 0v1.5a2.5 2.5 0 005 0V12a9 9 0 10-9 9m4.5-1.206a8.959 8.959 0 01-4.5 1.207"/></svg>
                         </span>
-                        <input type="email" id="email" name="email" value="{{ old('email', 'admin@dreampawn.test') }}" required autofocus
+                        <input type="email" id="email" name="email" value="{{ old('email', app()->environment('local', 'testing') ? 'admin@dreampawn.test' : '') }}" required autofocus
                                class="w-full pl-10 pr-4 py-2.5 rounded-xl bg-slate-900/80 border border-slate-700 text-slate-100 text-sm focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500 transition placeholder-slate-500"
                                placeholder="admin@dreampawn.test">
                     </div>
@@ -58,7 +58,8 @@
                 </div>
             </form>
 
-            <!-- Quick Demo Credential Autofill -->
+            @if (app()->environment('local', 'testing'))
+            <!-- Quick Demo Credential Autofill (local/test only) -->
             <div class="mt-6 pt-6 border-t border-slate-800 text-center">
                 <p class="text-xs text-slate-400 mb-2">Akun Uji Coba Lokal (Demo):</p>
                 <button type="button" onclick="fillAdminDemo()" 
@@ -84,4 +85,5 @@
         showToast('Kredensial Demo Admin telah diisi!', 'success');
     }
 </script>
+            @endif
 @endsection
