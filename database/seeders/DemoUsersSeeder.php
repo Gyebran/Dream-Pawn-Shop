@@ -15,6 +15,12 @@ class DemoUsersSeeder extends Seeder
      */
     public function run(): void
     {
+        // This seeder contains public demo credentials; never create them in production.
+        if (! app()->environment('local', 'testing')) {
+            $this->command?->warn('DemoUsersSeeder skipped outside local/testing environments.');
+            return;
+        }
+
         $now = now();
 
         DB::transaction(function () use ($now): void {
