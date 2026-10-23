@@ -13,13 +13,29 @@ use App\Http\Controllers\Member\DashboardController as MemberDashboardController
 use App\Http\Controllers\Member\FineController as MemberFineController;
 use App\Http\Controllers\Member\LoanRequestController as MemberLoanRequestController;
 use App\Http\Controllers\Member\ProfileController;
+use App\Models\Catalog\Category;
+use App\Models\Catalog\Item;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/', fn () => view('welcome'));
+Route::get('/', function () {
+    $categories = \Illuminate\Support\Facades\Schema::hasTable('categories')
+        ? Category::where('is_archived', false)->get()
+        : collect();
+    $items = \Illuminate\Support\Facades\Schema::hasTable('items')
+        ? Item::with('categories')
+            ->where('status', '!=', Item::ARCHIVED)
+            ->orderBy('id', 'asc')
+            ->take(6)
+            ->get()
+        : collect();
+    return view('welcome', compact('categories', 'items'));
+})->name('home');
 
 Route::prefix('admin')->name('admin.')->group(function (): void {
+ Route::get('/', fn () => redirect()->route('admin.dashboard'));
+ Route::get('/login',[AuthController::class,'showLoginForm'])->name('login.view');
  Route::post('/login',[AuthController::class,'login'])->middleware('throttle:10,1')->name('login');
- Route::post('/logout',[AuthController::class,'logout'])->middleware('auth')->name('logout');
+ Route::match(['get','post'],'/logout',[AuthController::class,'logout'])->middleware('auth')->name('logout');
  Route::middleware(['auth','admin'])->group(function (): void {
   Route::get('/dashboard',DashboardController::class)->name('dashboard');
   Route::get('/categories',[CategoryController::class,'index'])->name('categories.index');
@@ -49,8 +65,10 @@ Route::prefix('admin')->name('admin.')->group(function (): void {
 });
 
 Route::prefix('member')->name('member.')->group(function (): void {
+ Route::get('/', fn () => redirect()->route('member.dashboard'));
+ Route::get('/login',[MemberAuthController::class,'showLoginForm'])->name('login.view');
  Route::post('/login',[MemberAuthController::class,'login'])->middleware('throttle:10,1')->name('login');
- Route::post('/logout',[MemberAuthController::class,'logout'])->middleware('auth')->name('logout');
+ Route::match(['get','post'],'/logout',[MemberAuthController::class,'logout'])->middleware('auth')->name('logout');
  Route::middleware(['auth','member'])->group(function (): void {
   Route::get('/dashboard',MemberDashboardController::class)->name('dashboard');
   Route::get('/profile',[ProfileController::class,'show'])->name('profile.show');

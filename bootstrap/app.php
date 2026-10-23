@@ -11,7 +11,5 @@ return Application::configure(basePath:dirname(__DIR__))
   // Tanpa halaman login, callback bawaan Laravel memanggil route('login') dan melempar RouteNotFoundException (HTTP 500).
   $middleware->redirectGuestsTo(fn(Request $request)=>null);})
  ->withExceptions(function(Exceptions $exceptions):void{
-  // Admin dan Member backend bersifat JSON-only dan belum memiliki halaman login. Semua error di prefix ini
-  // dirender sebagai JSON (tamu menerima 401, bukan redirect ke route "login" yang tidak ada / HTTP 500).
-  $exceptions->shouldRenderJsonWhen(fn(Request $request,Throwable $e)=>$request->expectsJson()||$request->is('admin/*')||$request->is('member/*'));
+  $exceptions->shouldRenderJsonWhen(fn(Request $request,Throwable $e)=>$request->expectsJson()||($e instanceof \Illuminate\Auth\AuthenticationException&&($request->is('admin/*')||$request->is('member/*'))));
  })->create();

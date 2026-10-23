@@ -7,7 +7,17 @@ class EnsureMember {
  public function handle(Request $request, Closure $next): Response {
   $user=$request->user();
   if (!$user) return response()->json(['message'=>'Unauthenticated.'],401);
-  if (!$user->isMember() || !$user->memberProfile()->exists()) return response()->json(['message'=>'Akses Member diperlukan.'],403);
+  if (!$user->isMember() || !$user->memberProfile()->exists()) {
+   if ($request->expectsJson()) {
+    return response()->json(['message'=>'Akses Member diperlukan.'],403);
+   }
+   return response()->view('errors.403', [
+    'title' => 'Akses Member Diperlukan',
+    'message' => 'Halaman ini khusus diperuntukkan bagi akun Member. Anda saat ini sedang login dengan akun ' . ucfirst($user->role) . ' (' . $user->email . ').',
+    'currentUser' => $user,
+    'requiredRole' => 'member',
+   ], 403);
+  }
   return $next($request);
  }
 }
