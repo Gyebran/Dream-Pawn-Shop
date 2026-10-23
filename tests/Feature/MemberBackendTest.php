@@ -18,7 +18,10 @@ class MemberBackendTest extends TestCase {
 
  // --- Authentication and authorization (F-01) ---
  public function test_member_dashboard_requires_authentication():void{$this->getJson('/member/dashboard')->assertUnauthorized();}
- public function test_guest_browser_request_gets_json_401_instead_of_500():void{$this->get('/member/dashboard')->assertUnauthorized();$this->get('/admin/dashboard')->assertUnauthorized();}
+ public function test_role_login_pages_render_successfully():void{$this->get('/admin/login')->assertOk()->assertSee('Admin Command Login');$this->get('/member/login')->assertOk()->assertSee('Portal Peminjaman Member');}
+ public function test_guest_browser_requests_redirect_to_role_specific_login_pages():void{$this->get('/member/dashboard')->assertRedirect(route('member.login.view'));$this->get('/admin/dashboard')->assertRedirect(route('admin.login.view'));}
+ public function test_missing_admin_detail_views_render_for_authorized_admin():void{$admin=$this->roleUser('admin');$category=$this->category('View Test Category');$item=$this->item();$member=$this->roleUser('member');$this->actingAs($admin)->get("/admin/categories/{$category}")->assertOk()->assertSee('View Test Category');$this->get("/admin/items/{$item}")->assertOk()->assertSee($this->unitCode($item));$this->get("/admin/members/{$member->id}")->assertOk()->assertSee($member->email);}
+ public function test_missing_member_views_render_for_authorized_member():void{$member=$this->roleUser('member');$this->category('Member View Category');$loan=$this->loan($member->id,[$this->item()]);$this->actingAs($member)->get('/member/catalog/categories')->assertOk()->assertSee('Member View Category');$this->get("/member/loan-requests/{$loan['id']}")->assertOk()->assertSee('Detail Peminjaman Props');}
  public function test_admin_cannot_access_member_area():void{$this->actingAs($this->roleUser('admin'))->getJson('/member/dashboard')->assertForbidden();}
  public function test_inactive_member_cannot_access_member_area():void{$this->actingAs($this->roleUser('member',false))->getJson('/member/dashboard')->assertForbidden();}
  public function test_member_cannot_access_admin_routes():void{$this->actingAs($this->roleUser('member'))->getJson('/admin/items')->assertForbidden();}

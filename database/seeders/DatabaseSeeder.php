@@ -11,6 +11,11 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
+        // Demo accounts and sample catalog data must never be seeded into production.
+        if (! app()->environment('local', 'testing')) {
+            return;
+        }
+
         $this->call([
             DemoUsersSeeder::class,
             DemoCatalogSeeder::class,
