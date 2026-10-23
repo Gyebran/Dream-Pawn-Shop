@@ -33,11 +33,13 @@ Kode Admin saat ini berada di branch `feat/admin-backend`, bukan `main`.
 - Fines: daftar dan konfirmasi pembayaran.
 - Loan report dengan filter dan export CSV.
 - Pemisahan Controllers, Form Requests, Services, dan Models per domain.
+- Backend Member end-to-end: login/logout, dashboard eligibility, profil, katalog, pengajuan/riwayat loan, dan daftar denda.
 - Shared `LoanEligibilityService` untuk unpaid fines dan batas alokasi dua unit.
 - Command/schedule untuk membatalkan approval yang melewati deadline handover.
 - Migration constraint/index tambahan.
 - Feature tests untuk auth, authorization, katalog, Member, report, workflow loan, fine boundary, unpaid fine, batas dua unit, dan expiry.
-- CI test memakai SQLite in-memory dan hasil terakhir diketahui sukses.
+- CI test memakai SQLite in-memory. Setelah integrasi Admin + Member ke `main`, test suite terakhir berhasil: **52 tests passed, 183 assertions**.
+- Aturan Member: unit pada request `pending` milik Member ikut dihitung saat pengajuan baru dibuat, bersama approved reservations dan active loans. Pending tetap tidak mereservasi stok sampai Admin melakukan approval.
 
 ### Belum selesai / belum diverifikasi
 
@@ -87,6 +89,8 @@ Status yang digunakan:
 - `fines.status`: `unpaid`, `paid`.
 
 Jangan menambahkan status seperti `overdue` tanpa keputusan domain; keterlambatan dapat dihitung dari `due_at` dan waktu sekarang.
+
+**Batas dua unit pada pengajuan Member:** hitung unit dari request `pending` milik Member tersebut + approved reservations + active loans + unit pada request baru. Ini aturan saat pengajuan oleh Member. Saat Admin memutuskan approval, service Admin tetap memvalidasi approved reservations dan active loans; pending tidak mereservasi unit fisik.
 
 ## 4. Aturan coding dan kolaborasi
 
