@@ -68,6 +68,7 @@
                     <span>Klik Isi Otomatis Akun Demo Admin</span>
                 </button>
             </div>
+            @endif
         </div>
 
         <div class="mt-6 text-center text-xs text-slate-400">
@@ -78,6 +79,7 @@
     </div>
 </div>
 
+@if (app()->environment('local', 'testing'))
 <script>
     function fillAdminDemo() {
         document.getElementById('email').value = 'admin@dreampawn.test';
@@ -85,5 +87,5 @@
         showToast('Kredensial Demo Admin telah diisi!', 'success');
     }
 </script>
-            @endif
+@endif
 @endsection
