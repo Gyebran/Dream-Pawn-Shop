@@ -18,7 +18,7 @@ class MemberBackendTest extends TestCase {
 
  // --- Authentication and authorization (F-01) ---
  public function test_member_dashboard_requires_authentication():void{$this->getJson('/member/dashboard')->assertUnauthorized();}
- public function test_guest_browser_request_gets_json_401_instead_of_500():void{$this->get('/member/dashboard')->assertUnauthorized();$this->get('/admin/dashboard')->assertUnauthorized();}
+ public function test_guest_browser_requests_redirect_to_role_specific_login_pages():void{$this->get('/member/dashboard')->assertRedirect(route('member.login.view'));$this->get('/admin/dashboard')->assertRedirect(route('admin.login.view'));}
  public function test_admin_cannot_access_member_area():void{$this->actingAs($this->roleUser('admin'))->getJson('/member/dashboard')->assertForbidden();}
  public function test_inactive_member_cannot_access_member_area():void{$this->actingAs($this->roleUser('member',false))->getJson('/member/dashboard')->assertForbidden();}
  public function test_member_cannot_access_admin_routes():void{$this->actingAs($this->roleUser('member'))->getJson('/admin/items')->assertForbidden();}
