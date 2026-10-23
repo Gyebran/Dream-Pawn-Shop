@@ -45,7 +45,6 @@ Kode Admin saat ini berada di branch `feat/admin-backend`, bukan `main`.
 
 - NeonDB belum diuji; CI SQLite bukan bukti kompatibilitas PostgreSQL.
 - UI/UX lengkap dan integrasi semua halaman Blade belum dianggap selesai.
-- Member backend end-to-end belum diimplementasikan.
 - Scheduler production perlu benar-benar dikonfigurasi di environment deployment.
 - UAT, dokumentasi pengguna, dan final handover masih lanjutan.
 - File flowchart/ERD belum tersedia sebagai file terpisah yang dapat dibandingkan langsung di repo saat penulisan dokumen ini.
@@ -64,6 +63,19 @@ Kode Admin saat ini berada di branch `feat/admin-backend`, bukan `main`.
 | Reports | `GET /admin/reports/loans`, `GET /admin/reports/loans/export` |
 
 Verifikasi nama route, method, input, dan redirect aktual pada `routes/web.php` serta controller/Form Request sebelum integrasi FE.
+
+### Endpoint Member yang tersedia
+
+| Fitur | Endpoint |
+|---|---|
+| Auth | `POST /member/login`, `POST /member/logout` |
+| Dashboard | `GET /member/dashboard` |
+| Profile | `GET /member/profile`, `PATCH /member/profile` |
+| Catalog | `GET /member/catalog/categories`, `GET /member/catalog/items`, `GET /member/catalog/items/{item}` |
+| Loan requests | `GET /member/loan-requests`, `POST /member/loan-requests`, `GET /member/loan-requests/{loan}` |
+| Fines | `GET /member/fines` |
+
+Semua route Member selain login/logout dilindungi autentikasi dan middleware Member. Periksa controller/Form Request untuk detail payload dan response.
 
 ## 3. Business rules yang wajib dipertahankan
 
@@ -298,7 +310,7 @@ Jangan hapus index/constraint tanpa memahami query dan menyiapkan migration baru
 3. Finalisasi kontrak input/response/redirect.
 4. Implementasi UI Admin berdasarkan spesifikasi halaman di atas.
 5. Integrasikan tiap halaman ke endpoint dan tambahkan test edge case.
-6. Implementasi Member backend/UI setelah kontrak workflow disepakati.
+6. Implementasi dan integrasi UI Member berdasarkan kontrak workflow yang sudah diimplementasikan.
 7. UAT, dokumentasi pengguna, review PR, lalu merge setelah approval.
 
 ## 9. Checklist anggota tim
