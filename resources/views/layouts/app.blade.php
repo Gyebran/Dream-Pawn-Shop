@@ -24,14 +24,7 @@
     </style>
     @stack('styles')
 </head>
-<body class="bg-[#07090e] text-slate-200 font-sans-ui antialiased min-h-screen selection:bg-amber-500/30 selection:text-amber-200">
-    <!-- Background surreal ambient glow -->
-    <div class="fixed inset-0 pointer-events-none z-0 overflow-hidden">
-        <div class="absolute -top-40 -left-40 w-96 h-96 bg-amber-500/10 rounded-full blur-3xl"></div>
-        <div class="absolute top-1/3 -right-40 w-96 h-96 bg-indigo-500/10 rounded-full blur-3xl"></div>
-        <div class="absolute -bottom-40 left-1/3 w-96 h-96 bg-cyan-500/10 rounded-full blur-3xl"></div>
-    </div>
-
+<body class="bg-[#090B10] text-[#D8D0C0] font-sans-ui antialiased min-h-screen selection:bg-[#B68A4A]/30 selection:text-[#DFC08A]">
     <div class="relative z-10 flex flex-col min-h-screen">
         @yield('content')
     </div>
@@ -48,12 +41,12 @@
             const toast = document.createElement('div');
             toast.className = `pointer-events-auto px-4 py-3 rounded-xl shadow-2xl border text-sm flex items-center gap-3 transition-all duration-300 transform translate-y-4 opacity-0 ${
                 type === 'success' 
-                    ? 'bg-emerald-950/90 text-emerald-200 border-emerald-500/30' 
-                    : (type === 'error' ? 'bg-rose-950/90 text-rose-200 border-rose-500/30' : 'bg-amber-950/90 text-amber-200 border-amber-500/30')
+                    ? 'bg-[#141923] text-[#D8D0C0] border-[#B68A4A]/50 shadow-[#090B10]/80' 
+                    : (type === 'error' ? 'bg-[#181216] text-rose-200 border-rose-500/40 shadow-[#090B10]/80' : 'bg-[#1B2232] text-[#D8D0C0] border-slate-700 shadow-[#090B10]/80')
             }`;
             
             const icon = type === 'success' 
-                ? '<svg class="w-5 h-5 text-emerald-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>'
+                ? '<svg class="w-5 h-5 text-[#B68A4A] shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>'
                 : '<svg class="w-5 h-5 text-rose-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>';
 
             toast.innerHTML = `${icon}<span>${message}</span>`;

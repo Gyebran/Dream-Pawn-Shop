@@ -1,15 +1,15 @@
-@props(['title' => 'Tidak Ada Data', 'description' => 'Belum ada data yang tersedia untuk kriteria saat ini.', 'action' => null, 'actionUrl' => null])
+@props(['title' => 'No Artifacts Found', 'description' => 'No records currently match the archival criteria.', 'action' => null, 'actionUrl' => null])
 
 <div class="py-12 px-4 text-center">
-    <div class="w-16 h-16 mx-auto mb-4 rounded-2xl bg-slate-800/60 border border-slate-700/50 flex items-center justify-center text-slate-400">
-        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"/>
+    <div class="w-14 h-14 mx-auto mb-3.5 rounded-xl bg-[#1B2232] border border-[#202838] flex items-center justify-center text-[#B68A4A]">
+        <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/>
         </svg>
     </div>
-    <h3 class="text-lg font-medium text-slate-200 mb-1">{{ $title }}</h3>
-    <p class="text-sm text-slate-400 max-w-sm mx-auto mb-5">{{ $description }}</p>
+    <h3 class="text-sm font-semibold text-[#D8D0C0] mb-1">{{ $title }}</h3>
+    <p class="text-xs text-[#858A96] max-w-sm mx-auto mb-4 leading-relaxed">{{ $description }}</p>
     @if ($action && $actionUrl)
-        <a href="{{ $actionUrl }}" class="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium bg-amber-500 hover:bg-amber-400 text-slate-950 transition shadow-lg glow-gold">
+        <a href="{{ $actionUrl }}" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-semibold bg-[#B68A4A] hover:bg-[#C99B58] text-[#090B10] transition shadow-sm">
             {{ $action }}
         </a>
     @endif
