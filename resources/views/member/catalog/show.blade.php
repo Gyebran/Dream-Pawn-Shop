@@ -10,10 +10,16 @@
 
     <div class="glass-card rounded-2xl p-8 border border-slate-800 shadow-2xl relative overflow-hidden">
         <div class="flex flex-col md:flex-row gap-8">
-            <div class="w-full md:w-1/3 aspect-square rounded-2xl bg-gradient-to-tr from-slate-900 to-slate-800 border border-slate-700/80 flex items-center justify-center p-8 text-amber-400/80 shrink-0">
-                <svg class="w-24 h-24" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.25" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                </svg>
+            <div class="w-full md:w-1/3 aspect-square rounded-2xl bg-gradient-to-tr from-slate-900 to-slate-800 border border-slate-700/80 overflow-hidden shrink-0">
+                @if ($item->image_path)
+                    <img src="{{ asset('storage/'.$item->image_path) }}" alt="Foto {{ $item->name }}" class="h-full w-full object-cover" fetchpriority="high">
+                @else
+                    <div class="h-full w-full flex items-center justify-center p-8 text-amber-400/80">
+                        <svg class="w-24 h-24" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.25" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 01-18 0z"/>
+                        </svg>
+                    </div>
+                @endif
             </div>
 
             <div class="flex-1 space-y-4">
