@@ -16,7 +16,7 @@
                 @else
                     <div class="h-full w-full flex items-center justify-center p-8 text-amber-400/80">
                         <svg class="w-24 h-24" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.25" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 01-18 0z"/>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.25" d="M12 8v4l3 3m6-3a9 9 0 11-18 0"/>
                         </svg>
                     </div>
                 @endif
