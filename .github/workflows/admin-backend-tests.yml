@@ -24,5 +24,9 @@ jobs:
         run: |
           cp .env.example .env
           php artisan key:generate
+      - name: Validate Composer metadata
+        run: composer validate --no-check-publish
+      - name: Check PHP syntax
+        run: find app routes database/migrations database/seeders tests -type f -name '*.php' -print0 | xargs -0 -n1 php -l
       - name: Run feature tests
         run: php artisan test
