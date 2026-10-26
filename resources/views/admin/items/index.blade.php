@@ -68,6 +68,9 @@
                             </td>
                             <td class="px-6 py-4">
                                 <span class="font-semibold text-slate-100 text-sm block">{{ $item->name }}</span>
+                                @if ($item->image_path)
+                                    <img src="{{ asset('storage/'.$item->image_path) }}" alt="Foto {{ $item->name }}" loading="lazy" class="mt-2 h-12 w-16 rounded-lg border border-slate-700 object-cover">
+                                @endif
                             </td>
                             <td class="px-6 py-4">
                                 <div class="flex flex-wrap gap-1">
@@ -131,7 +134,7 @@
         <h3 class="font-serif-dream text-lg font-bold text-white mb-1">Tambah Unit Prop Baru</h3>
         <p class="text-xs text-slate-400 mb-4">Daftarkan artefak fisik surreal ke dalam katalog.</p>
 
-        <form method="POST" action="{{ route('admin.items.store') }}" class="space-y-4">
+        <form method="POST" action="{{ route('admin.items.store') }}" enctype="multipart/form-data" class="space-y-4">
             @csrf
             <div>
                 <label class="block text-xs font-semibold text-slate-300 mb-1">Kode Unit * (Unik)</label>
@@ -167,6 +170,11 @@
                           placeholder="Penjelasan rupa prop fisik dan sifat fantasi surreal..."></textarea>
             </div>
 
+            <div>
+                <label class="block text-xs font-semibold text-slate-300 mb-1">Foto Prop (JPG, PNG, WEBP; maks. 2 MB)</label>
+                <input type="file" name="image" accept="image/jpeg,image/png,image/webp" class="w-full text-xs text-slate-300 file:mr-3 file:rounded-lg file:border-0 file:bg-slate-800 file:px-3 file:py-2 file:text-amber-300">
+            </div>
+
             <div class="flex items-center justify-end gap-3 pt-3">
                 <button type="button" onclick="closeModal('create-item-modal')" class="px-4 py-2 rounded-xl text-xs font-medium text-slate-400 hover:text-slate-200 transition">
                     Batal
@@ -186,7 +194,7 @@
         <h3 class="font-serif-dream text-lg font-bold text-white mb-1">Edit Unit Prop</h3>
         <p class="text-xs text-slate-400 mb-4">Perbarui informasi barang props.</p>
 
-        <form id="edit-item-form" method="POST" class="space-y-4">
+        <form id="edit-item-form" method="POST" enctype="multipart/form-data" class="space-y-4">
             @csrf
             @method('PATCH')
             <div>
@@ -218,6 +226,11 @@
                 <label class="block text-xs font-semibold text-slate-300 mb-1">Deskripsi</label>
                 <textarea id="edit-item-description" name="description" rows="3"
                           class="w-full px-3.5 py-2 rounded-xl bg-slate-900 border border-slate-700 text-slate-200 text-sm focus:border-amber-500 focus:outline-none"></textarea>
+            </div>
+
+            <div>
+                <label class="block text-xs font-semibold text-slate-300 mb-1">Foto Prop (JPG, PNG, WEBP; maks. 2 MB)</label>
+                <input type="file" name="image" accept="image/jpeg,image/png,image/webp" class="w-full text-xs text-slate-300 file:mr-3 file:rounded-lg file:border-0 file:bg-slate-800 file:px-3 file:py-2 file:text-amber-300">
             </div>
 
             <div class="flex items-center justify-end gap-3 pt-3">
