@@ -13,6 +13,7 @@ use App\Http\Controllers\Member\DashboardController as MemberDashboardController
 use App\Http\Controllers\Member\FineController as MemberFineController;
 use App\Http\Controllers\Member\LoanRequestController as MemberLoanRequestController;
 use App\Http\Controllers\Member\ProfileController;
+use App\Http\Controllers\Member\RegistrationController;
 use App\Models\Catalog\Category;
 use App\Models\Catalog\Item;
 use Illuminate\Support\Facades\Route;
@@ -66,6 +67,8 @@ Route::prefix('admin')->name('admin.')->group(function (): void {
 
 Route::prefix('member')->name('member.')->group(function (): void {
  Route::get('/', fn () => redirect()->route('member.dashboard'));
+ Route::get('/register', [RegistrationController::class, 'create'])->name('register');
+ Route::post('/register', [RegistrationController::class, 'store'])->middleware('throttle:5,1')->name('register.store');
  Route::get('/login',[MemberAuthController::class,'showLoginForm'])->name('login.view');
  Route::post('/login',[MemberAuthController::class,'login'])->middleware('throttle:10,1')->name('login');
  Route::match(['get','post'],'/logout',[MemberAuthController::class,'logout'])->middleware('auth')->name('logout');
