@@ -66,6 +66,12 @@
             @endphp
             <div class="glass-card rounded-2xl p-6 border border-slate-800 flex flex-col justify-between relative group hover:border-amber-500/30 transition duration-300 {{ !$isAvail ? 'opacity-70' : '' }}">
                 <div>
+                    @if ($item->image_path)
+                        <img src="{{ asset('storage/'.$item->image_path) }}" alt="Foto {{ $item->name }}" loading="lazy" class="mb-4 h-48 w-full rounded-xl border border-slate-700 object-cover">
+                    @else
+                        <div class="mb-4 flex h-48 w-full items-center justify-center rounded-xl border border-dashed border-slate-700 bg-slate-900/60 text-xs text-slate-500">Foto belum tersedia</div>
+                    @endif
+
                     <!-- Top row: Unit code & status -->
                     <div class="flex items-center justify-between gap-2 mb-3">
                         <span class="font-mono text-xs font-bold text-amber-400 px-2 py-0.5 rounded bg-amber-500/10 border border-amber-500/20">
