@@ -71,7 +71,12 @@
             @endif
         </div>
 
-        <div class="mt-6 text-center text-xs text-slate-400">
+        <div class="mt-6 text-center text-sm text-slate-400">
+            Belum punya akun?
+            <a href="{{ route('member.register') }}" class="text-cyan-400 hover:text-cyan-300 font-semibold transition">Daftar sebagai Member</a>
+        </div>
+
+        <div class="mt-4 text-center text-xs text-slate-400">
             <a href="{{ route('home') }}" class="hover:text-cyan-400 transition">&larr; Kembali ke Halaman Utama</a>
             <span class="mx-2 text-slate-600">•</span>
             <a href="{{ route('admin.login.view') }}" class="hover:text-amber-400 transition">Command Center Admin &rarr;</a>
