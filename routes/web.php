@@ -62,6 +62,7 @@ Route::prefix('admin')->name('admin.')->group(function (): void {
   Route::post('/fines/{fine}/confirm-payment',[FineController::class,'confirmPayment'])->name('fines.confirm-payment');
   Route::get('/reports/loans',[LoanReportController::class,'index'])->name('reports.loans.index');
   Route::get('/reports/loans/export',[LoanReportController::class,'export'])->name('reports.loans.export');
+  Route::get('/reports/loans/print',[LoanReportController::class,'print'])->name('reports.loans.print');
  });
 });
 
