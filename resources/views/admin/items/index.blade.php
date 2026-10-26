@@ -136,11 +136,9 @@
 
         <form method="POST" action="{{ route('admin.items.store') }}" enctype="multipart/form-data" class="space-y-4">
             @csrf
-            <div>
-                <label class="block text-xs font-semibold text-slate-300 mb-1">Kode Unit * (Unik)</label>
-                <input type="text" name="unit_code" required
-                       class="w-full px-3.5 py-2 rounded-xl bg-slate-900 border border-slate-700 text-slate-200 text-sm focus:border-amber-500 focus:outline-none placeholder-slate-500 font-mono"
-                       placeholder="Misal: DPS-007, REL-042">
+            <div class="rounded-xl border border-amber-500/20 bg-amber-500/5 px-4 py-3">
+                <p class="text-xs font-semibold text-amber-300">Kode unit dibuat otomatis</p>
+                <p class="mt-1 text-xs text-slate-400">Kode dibentuk dari huruf awal setiap kata pada nama barang, diikuti ID database. Contoh: Chronos Sandglass menjadi CS-123.</p>
             </div>
 
             <div>
@@ -198,9 +196,9 @@
             @csrf
             @method('PATCH')
             <div>
-                <label class="block text-xs font-semibold text-slate-300 mb-1">Kode Unit *</label>
-                <input type="text" id="edit-item-unit-code" name="unit_code" required
-                       class="w-full px-3.5 py-2 rounded-xl bg-slate-900 border border-slate-700 text-slate-200 text-sm focus:border-amber-500 focus:outline-none font-mono">
+                <label class="block text-xs font-semibold text-slate-300 mb-1">Kode Unit (otomatis, tidak dapat diubah)</label>
+                <input type="text" id="edit-item-unit-code" readonly
+                       class="w-full px-3.5 py-2 rounded-xl bg-slate-950 border border-slate-800 text-amber-300 text-sm font-mono cursor-not-allowed">
             </div>
 
             <div>
