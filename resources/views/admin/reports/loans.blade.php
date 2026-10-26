@@ -5,7 +5,7 @@
 
 @section('admin_content')
 <div class="space-y-6">
-    <!-- Header with Export CSV -->
+    <!-- Header with Export CSV and PDF print -->
     <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
             <h1 class="font-serif-dream text-xl font-bold text-white tracking-wide">Laporan Pinjaman Props</h1>
@@ -17,11 +17,14 @@
         @php
             $exportUrl = route('admin.reports.loans.export', request()->query());
         @endphp
+        <div class="flex flex-wrap gap-2">
+        <a href="{{ route('admin.reports.loans.print', request()->query()) }}" target="_blank" rel="noopener" class="px-4 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs transition shadow flex items-center justify-center gap-2 self-start sm:self-auto"><span>Cetak / Simpan PDF</span></a>
         <a href="{{ $exportUrl }}" 
            class="px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-emerald-300 font-bold text-xs border border-emerald-500/30 transition shadow flex items-center justify-center gap-2 self-start sm:self-auto">
             <svg class="w-4 h-4 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
             <span>Export Laporan ke CSV</span>
         </a>
+        </div>
     </div>
 
     <!-- Date Range & Filter Form -->
