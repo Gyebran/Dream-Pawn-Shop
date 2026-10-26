@@ -6,6 +6,8 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Http\UploadedFile;
 use Tests\TestCase;
 class AdminBackendTest extends TestCase {
  use RefreshDatabase;
@@ -28,4 +30,27 @@ class AdminBackendTest extends TestCase {
  public function test_member_with_unpaid_fine_cannot_have_new_request_approved():void{$admin=$this->roleUser('admin');$member=$this->roleUser('member');$oldItem=$this->item(Item::ARCHIVED);$old=$this->loan($member->id,$oldItem,'returned',now()->subDays(2));DB::table('fines')->insert(['loan_request_item_id'=>$old['detail'],'recorded_by'=>$admin->id,'amount'=>10000,'status'=>'unpaid','assessed_at'=>now(),'created_at'=>now(),'updated_at'=>now()]);$newItem=$this->item();$pending=$this->loan($member->id,$newItem);$this->actingAs($admin)->postJson("/admin/loan-requests/{$pending['id']}/approve")->assertUnprocessable();$this->assertDatabaseHas('loan_requests',['id'=>$pending['id'],'status'=>'pending']);$this->assertDatabaseHas('items',['id'=>$newItem,'status'=>Item::AVAILABLE]);}
  public function test_member_cannot_exceed_two_allocated_units():void{$admin=$this->roleUser('admin');$member=$this->roleUser('member');$now=now();$existing=DB::table('loan_requests')->insertGetId(['member_id'=>$member->id,'status'=>'active','requested_at'=>$now->copy()->subDays(6),'handed_over_at'=>$now->copy()->subDays(5),'due_at'=>$now->copy()->addDay(),'created_at'=>$now,'updated_at'=>$now]);foreach([Item::LOANED,Item::LOANED] as $status)DB::table('loan_request_items')->insert(['loan_request_id'=>$existing,'item_id'=>$this->item($status),'created_at'=>$now]);$available=$this->item();$pending=$this->loan($member->id,$available);$this->actingAs($admin)->postJson("/admin/loan-requests/{$pending['id']}/approve")->assertUnprocessable();$this->assertDatabaseHas('items',['id'=>$available,'status'=>Item::AVAILABLE]);}
  public function test_expired_approved_request_is_cancelled_and_reserved_units_released():void{$member=$this->roleUser('member');$item=$this->item(Item::RESERVED);$now=now();$loan=DB::table('loan_requests')->insertGetId(['member_id'=>$member->id,'status'=>'approved','requested_at'=>$now->copy()->subDay(),'reviewed_at'=>$now->copy()->subDay(),'handover_deadline_at'=>$now->copy()->subSecond(),'created_at'=>$now,'updated_at'=>$now]);DB::table('loan_request_items')->insert(['loan_request_id'=>$loan,'item_id'=>$item,'created_at'=>$now]);Artisan::call('loans:cancel-expired-handover');$this->assertDatabaseHas('loan_requests',['id'=>$loan,'status'=>'cancelled']);$this->assertDatabaseHas('items',['id'=>$item,'status'=>Item::AVAILABLE]);}
+ public function test_admin_can_upload_an_item_photo_to_public_storage():void{
+  Storage::fake('public');
+  $this->actingAs($this->roleUser('admin'))->post('/admin/items',[
+   'unit_code'=>'IMG-001',
+   'name'=>'The Illustrated Relic',
+   'description'=>'Catalog image test',
+   'image'=>UploadedFile::fake()->image('relic.jpg',640,480),
+  ])->assertRedirect(route('admin.items.index'));
+  $item=DB::table('items')->where('unit_code','IMG-001')->first();
+  $this->assertNotNull($item);
+  $this->assertNotEmpty($item->image_path);
+  Storage::disk('public')->assertExists($item->image_path);
+ }
+ public function test_admin_item_photo_rejects_non_image_uploads():void{
+  Storage::fake('public');
+  $this->actingAs($this->roleUser('admin'))->postJson('/admin/items',[
+   'unit_code'=>'IMG-BAD-001',
+   'name'=>'Invalid Photo',
+   'image'=>UploadedFile::fake()->create('payload.txt',10,'text/plain'),
+  ])->assertUnprocessable()->assertJsonValidationErrors('image');
+  $this->assertDatabaseMissing('items',['unit_code'=>'IMG-BAD-001']);
+ }
+
 }
