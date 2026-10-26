@@ -27,4 +27,5 @@ class LoanReportController extends Controller {
   return view('admin.reports.loans', ['report' => $data, 'filters' => $f]);
  }
  public function export(Request $r,LoanReportService $s):StreamedResponse{return $s->exportCsv($this->filters($r));}
+ public function print(Request $r,LoanReportService $s):View{return view('admin.reports.loans-print',['report'=>$s->forPrint($this->filters($r)),'filters'=>$this->filters($r)]);}
 }
