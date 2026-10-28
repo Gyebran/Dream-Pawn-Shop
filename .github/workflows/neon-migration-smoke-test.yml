@@ -1,0 +1,47 @@
+name: Neon PostgreSQL migration smoke test
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  migrate:
+    runs-on: ubuntu-latest
+    env:
+      APP_ENV: testing
+      DB_CONNECTION: pgsql
+      DB_URL: ${{ secrets.NEON_TEST_DATABASE_URL }}
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: "8.3"
+          extensions: mbstring, pdo_pgsql, pgsql, xml, curl, zip, bcmath
+          coverage: none
+          tools: composer:v2
+
+      - name: Install PHP dependencies
+        run: composer install --no-interaction --prefer-dist
+
+      - name: Prepare Laravel environment
+        run: |
+          cp .env.example .env
+          php artisan key:generate
+
+      - name: Validate database secret is configured
+        run: |
+          if [ -z "$DB_URL" ]; then
+            echo "Missing GitHub Actions secret: NEON_TEST_DATABASE_URL"
+            exit 1
+          fi
+
+      - name: Apply pending migrations to Neon
+        run: php artisan migrate --force
+
+      - name: Verify migration status
+        run: php artisan migrate:status
